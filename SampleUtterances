@@ -1,0 +1,38 @@
+updateReq       when was this last updated
+updateReq       when was it last updated
+upadteReq       what is the last set of data
+updateReq       when was this updated
+updateReq       how long ago was this updated
+
+contactReq      how to contact the police in {City}
+contactReq      how to contact police in {City}
+contactReq      contact the police in {City}
+contactReq      contact police in {City}
+contactReq      {City} police contact
+contactReq      {City} police contact information
+contactReq      contact information for {City} police
+contactReq      contact information for police in {City}
+contactReq      {City} police social media
+contactReq      {City} social media
+
+crimeReq        crimes in {Month} near {City}
+crimeReq        crimes near {City} in {Month}
+crimeReq        {City} crimes in {Month}
+crimeReq        {Month} crimes near {City}
+crimeReq        reported {City} crimes in {Month}
+crimeReq        reports in {Month} near {City}   
+crimeReq        reports near {City} in {Month}
+crimeReq        {City} reports in {Month}
+crimeReq        {Month} reports near {City}
+crimeReq        reports of crime in {City} in {Month}
+
+eventReq        police events in {City}
+eventReq        events in {City}
+eventReq        upcoming {City} police events
+eventReq        upcoming {City} events
+eventReq        upcoming police events in {City}
+eventReq        upcoming events in {City}
+eventReq        {City} police events
+eventReq        {City} events
+eventReq        local police events in {City}
+eventReq        local events in {City}

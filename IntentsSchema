@@ -1,0 +1,47 @@
+{
+  "intents": [
+    {
+      "intent": "updateReq"
+    },
+    {
+      "slots": [
+        {
+          "name": "City",
+          "type": "AMAZON.GB_CITY"
+        }
+      ],
+      "intent": "contactReq"
+    },
+    {
+      "slots": [
+        {
+          "name": "City",
+          "type": "AMAZON.GB_CITY"
+        },
+        {
+          "name": "Month",
+          "type": "AMAZON.DATE"
+        }
+      ],
+      "intent": "crimeReq"
+    },
+    {
+      "slots": [
+        {
+          "name": "City",
+          "type": "AMAZON.GB_CITY"
+        }
+      ],
+      "intent": "eventReq"
+    },
+    {
+      "intent": "AMAZON.HelpIntent"
+    },
+    {
+      "intent": "AMAZON.StopIntent"
+    },
+    {
+      "intent": "AMAZON.CancelIntent"
+    }
+  ]
+}

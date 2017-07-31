@@ -29,12 +29,11 @@ exports.handler = (event, context) => {
 
       case "IntentRequest":
         // Intent Request
-        console.log('INTENT REQUEST');
 
         switch(event.request.intent.name) {
 
 		  case "updateReq":
-
+		  	console.log("UPDATE REQUEST")
 		  	var get_options = {
    					host: "data.police.uk",
    					path: '/api/crime-last-updated',
@@ -78,7 +77,7 @@ exports.handler = (event, context) => {
 
           case "contactReq":
 		 	var self;
-
+			 console.log('CONTACT REQUEST');
 		  	var city = event.request.intent.slots.City.value
 			  var formatCity = city.replace(/ /g,"+");
 			  formatCity = formatCity.replace("Saint", 'st.');
@@ -241,7 +240,7 @@ exports.handler = (event, context) => {
 
         case "eventReq":
 			var self;
-
+			console.log('EVENT REQUEST');
 		  	var city = event.request.intent.slots.City.value
 			  var formatCity = city.replace(/ /g,"+");
 			  formatCity = formatCity.replace("Saint", 'st.');
@@ -404,7 +403,149 @@ exports.handler = (event, context) => {
 
         break;
 
-        case "eventReq":
+        case "crimeReq":
+			var self;
+			console.log('CRIME REQUEST');
+			var month = event.request.intent.slots.Month.value;
+		  	var city = event.request.intent.slots.City.value;
+
+			var today = new Date();
+			var currentMonth = today.getMonth()+1; //Jan is 0
+			var currentYear = today.getFullYear();
+
+			if(city === undefined || city === ""){
+				context.succeed(
+					generateResponse(
+						buildSpeechletResponse("Sorry, I didn't hear a city to report crimes for", true),
+						{}
+					)
+				)
+			}
+			if(month === undefined || month === ""){
+				month = currentYear + "-" + currentMonth;
+			}
+
+			var formatCity = city.replace(/ /g,"+");
+			formatCity = formatCity.replace("Saint", 'st.');
+			console.log(formatCity);
+
+			if(parseInt(month.substring(5,7)) > currentMonth){
+				month = month.substring(0, 5) + currentMonth;
+			}
+			if(parseInt(month.substring(0,4)) > currentYear){
+				month = currentYear + "-" + month.substring(5,7);
+			}
+			console.log(month);
+
+        	Eventer = function(){
+				 events.EventEmitter.call(this);
+
+				 var cord_options = {
+						host: "alpha.openaddressesuk.org",
+						path: '/addresses.json?town=' + formatCity,
+						method: 'GET',
+						rejectUnauthorized: false,
+					headers: {}
+				};
+
+				 this.getCords = function(){
+					 self = this;
+					https.get(cord_options, function(res){
+						console.log("STATUS: " +res.statusCode);
+							body = '';
+							res.on('data', function(chunk) {
+								body += chunk;
+							});
+							res.on('end', function() {
+								try {
+									//Use Info Here
+									var info = JSON.parse(body);
+									//console.log(info);
+
+									var lat = info.addresses[0].postcode.geo.latitude;
+									var long = info.addresses[0].postcode.geo.longitude;
+									//console.log(lat + " + " + long);
+									self.emit('crime', lat, long);
+								
+						
+								} catch (e) {
+									console.log("Got error: " + e.message);
+									context.succeed(
+										generateResponse(
+											buildSpeechletResponse("Error finding crime reports in " + month +" for " + city, true),
+											{}
+										)
+									)
+								}	
+							})
+					});
+				 }
+
+				 this.crime = function(lat, long){
+					 self = this;
+
+					var crime_options = {
+						host: "data.police.uk",
+						path: '/api/crimes-at-location?date=' + month + "&lat=" + lat + '&lng=' + long,
+						method: 'GET',
+					headers: {}
+					};
+				
+					 https.get(crime_options, function(res){
+						console.log("STATUS: " +res.statusCode);
+							body = '';
+							res.on('data', function(chunk) {
+								body += chunk;
+							});
+							res.on('end', function() {
+								try {
+									//Use Info Here
+									var info = JSON.parse(body);
+									console.log(info);
+
+									var crime_info = "";
+									for(var i = 0; i < info.length; i++){
+										var temp = "\n" + "Category: " + info[i].category + 
+													"\nWhen: " + info[i].month +
+													"\nWhere: " + info[i].location.street.name +
+													"\n--------------------";
+													
+										crime_info += temp;
+									}
+									console.log(crime_info);
+
+									context.succeed(
+										generateResponse(
+											buildSpeechletResponseCard("I have sent reported crimes for " + month + " near " + city + " to your Alexa App", city + "'s " + month +" Crime Reports", crime_info, true),
+											{}
+										)
+									)
+								
+								} catch (e) {
+									console.log("Got error: " + e.message);
+									context.succeed(
+										generateResponse(
+											buildSpeechletResponse("Error finding crime reports in " + city +" during " + month, true),
+											{}
+										)
+									)
+								}	
+							})
+					});
+				 }
+			}
+        	util.inherits(Eventer, events.EventEmitter);
+        	
+        	 Listener = function(){
+        		this.crime = function(lat, long){
+					eventer.crime(lat, long)
+        		}
+        	}
+        	var eventer = new Eventer();
+        	var listener = new Listener(eventer);
+        	eventer.on('crime', listener.crime);
+        	eventer.getCords();
+
     	break;
             
          case "AMAZON.HelpIntent":
@@ -496,10 +637,6 @@ generateResponse = (speechletResponse, sessionAttributes) => {
   }
 
 
-}
-String.prototype.replaceAt  = function(index, character, string)
-{
-	return this.substr(0, index-1) + character + this.substr(index, string.length);
 }
 
 

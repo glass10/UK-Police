@@ -198,7 +198,7 @@ exports.handler = (event, context) => {
 
 										var temp = title+ ": " + info.engagement_methods[i].url + "\n"
 										contact_info += temp;
-										contact_info += "/n--------------------/n"
+										contact_info += "\n--------------------\n"
 									}
 									console.log(contact_info);
 									context.succeed(
@@ -358,19 +358,20 @@ exports.handler = (event, context) => {
 									for(var i = 0; i < info.length; i++){
 										var when = info[i].start_date;
 
-										var temp = info[i].title + 
-													"/nWhen: " + when.substring(0,10) + " at " + when.substring(11, 16) +
-													"/nWhere: " + info[i].address +
-													"/n--------------------";
+										var temp = "\n" + info[i].title + 
+													"\nWhen: " + when.substring(0,10) + " at " + when.substring(11, 16) +
+													"\nWhere: " + info[i].address +
+													"\n--------------------";
 													
 										event_info += temp;
 									}
-									// context.succeed(
-									// 	generateResponse(
-									// 		buildSpeechletResponseCard("I have sent upcoming events for " + " to your Alexa App", name + " Contact Information", contact_info, true),
-									// 		{}
-									// 	)
-									// )
+									console.log(event_info);
+									context.succeed(
+										generateResponse(
+											buildSpeechletResponseCard("I have sent upcoming events for " + city + " to your Alexa App", city + " Upcoming Events", event_info, true),
+											{}
+										)
+									)
 						
 								} catch (e) {
 									console.log("Got error: " + e.message);

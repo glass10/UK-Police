@@ -64,7 +64,7 @@ exports.handler = (event, context) => {
 							console.log("Got error: " + e.message);
 							context.succeed(
 								generateResponse(
-									buildSpeechletResponse("Error checking last update", true),
+									buildSpeechletResponse("I had an issue checking the last update", true),
 									{}
 								)
 							)
@@ -118,7 +118,7 @@ exports.handler = (event, context) => {
 									console.log("Got error: " + e.message);
 									context.succeed(
 										generateResponse(
-											buildSpeechletResponse("Error finding contact information for " + city, true),
+											buildSpeechletResponse("I had an issue finding contact information for " + city, true),
 											{}
 										)
 									)
@@ -157,7 +157,7 @@ exports.handler = (event, context) => {
 									console.log("Got error: " + e.message);
 									context.succeed(
 										generateResponse(
-											buildSpeechletResponse("Error finding contact information for " + city, true),
+											buildSpeechletResponse("I had an issue finding contact information for " + city, true),
 											{}
 										)
 									)
@@ -211,7 +211,7 @@ exports.handler = (event, context) => {
 									console.log("Got error: " + e.message);
 									context.succeed(
 										generateResponse(
-											buildSpeechletResponse("Error finding contact information for " + city, true),
+											buildSpeechletResponse("I had an issue finding contact information for " + city, true),
 											{}
 										)
 									)
@@ -234,8 +234,13 @@ exports.handler = (event, context) => {
         	var listener = new Listener(eventer);
         	eventer.on('locate', listener.locate);
 			eventer.on('contact', listener.contact);
-        	eventer.getCords();
 
+			if(city === "London" || city === "london"){
+				eventer.contact("metropolitan");
+			}	
+			else{
+				eventer.getCords();
+			}
             break;
 
         case "eventReq":
@@ -281,7 +286,7 @@ exports.handler = (event, context) => {
 									console.log("Got error: " + e.message);
 									context.succeed(
 										generateResponse(
-											buildSpeechletResponse("Error finding upcoming events for " + city, true),
+											buildSpeechletResponse("I had an issue finding upcoming events for " + city, true),
 											{}
 										)
 									)
@@ -322,7 +327,7 @@ exports.handler = (event, context) => {
 									console.log("Got error: " + e.message);
 									context.succeed(
 										generateResponse(
-											buildSpeechletResponse("Error finding upcoming events for " + city, true),
+											buildSpeechletResponse("I had an issue finding upcoming events for " + city, true),
 											{}
 										)
 									)
@@ -365,18 +370,28 @@ exports.handler = (event, context) => {
 										event_info += temp;
 									}
 									console.log(event_info);
-									context.succeed(
-										generateResponse(
-											buildSpeechletResponseCard("I have sent upcoming events for " + city + " to your Alexa App", city + " Upcoming Events", event_info, true),
-											{}
+									if(event_info !== ""){
+										context.succeed(
+											generateResponse(
+												buildSpeechletResponseCard("I have sent upcoming events for " + city + " to your Alexa App", city + " Upcoming Events", event_info, true),
+												{}
+											)
 										)
-									)
+									}
+									else{
+										context.succeed(
+											generateResponse(
+												buildSpeechletResponse("Looks like there aren't any upcoming events for " + city, true),
+												{}
+											)
+										)
+									}
 						
 								} catch (e) {
 									console.log("Got error: " + e.message);
 									context.succeed(
 										generateResponse(
-											buildSpeechletResponse("Error finding upcoming events for " + city, true),
+											buildSpeechletResponse("I had an issue finding upcoming events for " + city, true),
 											{}
 										)
 									)
@@ -399,7 +414,13 @@ exports.handler = (event, context) => {
         	var listener = new Listener(eventer);
         	eventer.on('locate', listener.locate);
 			eventer.on('event', listener.event);
-        	eventer.getCords();
+        	
+			if(city === "London" || city === "london"){
+				eventer.locate("51.508530", "-0.076132");
+			}	
+			else{
+				eventer.getCords();
+			}
 
         break;
 
@@ -472,7 +493,7 @@ exports.handler = (event, context) => {
 									console.log("Got error: " + e.message);
 									context.succeed(
 										generateResponse(
-											buildSpeechletResponse("Error finding crime reports in " + month +" for " + city, true),
+											buildSpeechletResponse("I had an issue finding crime reports in " + month +" for " + city, true),
 											{}
 										)
 									)
@@ -513,19 +534,28 @@ exports.handler = (event, context) => {
 										crime_info += temp;
 									}
 									console.log(crime_info);
-
-									context.succeed(
-										generateResponse(
-											buildSpeechletResponseCard("I have sent reported crimes for " + month + " near " + city + " to your Alexa App", city + "'s " + month +" Crime Reports", crime_info, true),
-											{}
+									if(crime_info !== ""){
+										context.succeed(
+											generateResponse(
+												buildSpeechletResponseCard("I have sent reported crimes for " + month + " near " + city + " to your Alexa App", city + "'s " + month +" Crime Reports", crime_info, true),
+												{}
+											)
 										)
-									)
+									}
+									else{
+										context.succeed(
+											generateResponse(
+												buildSpeechletResponse("Looks like there are no crime reports in " + city +" during " + month, true),
+												{}
+											)
+										)
+									}
 								
 								} catch (e) {
 									console.log("Got error: " + e.message);
 									context.succeed(
 										generateResponse(
-											buildSpeechletResponse("Error finding crime reports in " + city +" during " + month, true),
+											buildSpeechletResponse("I had an issue finding crime reports in " + city +" during " + month, true),
 											{}
 										)
 									)
@@ -544,7 +574,13 @@ exports.handler = (event, context) => {
         	var eventer = new Eventer();
         	var listener = new Listener(eventer);
         	eventer.on('crime', listener.crime);
-        	eventer.getCords();
+
+			if(city === "London" || city === "london"){
+				eventer.crime("51.508530", "-0.076132");
+			}	
+			else{
+				eventer.getCords();
+			}
 
     	break;
             

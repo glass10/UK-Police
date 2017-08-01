@@ -493,7 +493,7 @@ exports.handler = (event, context) => {
 									console.log("Got error: " + e.message);
 									context.succeed(
 										generateResponse(
-											buildSpeechletResponse("I had an issue finding crime reports in " + month +" for " + city, true),
+											buildSpeechletResponse("I had an issue finding crime reports in " + month +" for " + city + ". Try asking when the database was last updated", true),
 											{}
 										)
 									)
@@ -555,7 +555,7 @@ exports.handler = (event, context) => {
 									console.log("Got error: " + e.message);
 									context.succeed(
 										generateResponse(
-											buildSpeechletResponse("I had an issue finding crime reports in " + city +" during " + month, true),
+											buildSpeechletResponse("I had an issue finding crime reports in " + month +" for " + city+ ". Try asking when the database was last updated", true),
 											{}
 										)
 									)

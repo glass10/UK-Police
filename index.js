@@ -78,7 +78,16 @@ exports.handler = (event, context) => {
           case "contactReq":
 		 	var self;
 			 console.log('CONTACT REQUEST');
-		  	var city = event.request.intent.slots.City.value
+		  	var city = event.request.intent.slots.City.value;
+
+			if(city === undefined || city === ""){
+				context.succeed(
+					generateResponse(
+						buildSpeechletResponse("Sorry, I didn't hear a city to get contact info for", true),
+						{}
+					)
+				)
+			}
 			  var formatCity = city.replace(/ /g,"+");
 			  formatCity = formatCity.replace("Saint", 'st.');
 			  console.log(formatCity);
@@ -246,7 +255,17 @@ exports.handler = (event, context) => {
         case "eventReq":
 			var self;
 			console.log('EVENT REQUEST');
-		  	var city = event.request.intent.slots.City.value
+		  	var city = event.request.intent.slots.City.value;
+
+			if(city === undefined || city === ""){
+				context.succeed(
+					generateResponse(
+						buildSpeechletResponse("Sorry, I didn't hear a city to get upcoming events for", true),
+						{}
+					)
+				)
+			}
+
 			  var formatCity = city.replace(/ /g,"+");
 			  formatCity = formatCity.replace("Saint", 'st.');
 			  console.log(formatCity);
